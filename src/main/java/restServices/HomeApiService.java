@@ -1,5 +1,7 @@
 package restServices;
 
+import configuration.jwtConfiguration.JsonTokenNeeded;
+import java.net.UnknownHostException;
 import models.Device;
 import response.AuthorizationResponse;
 import response.BaseResponse;
@@ -13,6 +15,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
+import java.util.List;
+import javax.ws.rs.GET;
+import models.Periodista;
+import models.PeriodistaDAO;
 
 @Path("/")
 public class HomeApiService extends BaseApiService {
@@ -21,22 +27,38 @@ public class HomeApiService extends BaseApiService {
     private static final String PASSWORD = "password";
 
     @POST
-    @Path(value = "authorization_service")
+    @Path("/authorization_service")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response authorizationService(@HeaderParam(USERNAME) String userName, @HeaderParam(PASSWORD) String password) {
-        if (userName.isEmpty())
+    public Response authorizationService(@HeaderParam(USERNAME) String userName, @HeaderParam(PASSWORD) String password) throws UnknownHostException {
+        System.out.println("sadfasdfasdfadfs");
+        if (userName.isEmpty()) {
             return getResponse(new BaseResponse(USERNAME + " field cannot be empty", BaseResponse.FAILURE));
-        else if (password.isEmpty())
+        } else if (password.isEmpty()) {
             return getResponse(new BaseResponse(PASSWORD + " field cannot be empty", BaseResponse.FAILURE));
-        String privateKey = JwTokenHelper.getInstance().generatePrivateKey(userName, password);
-        return getResponse(new AuthorizationResponse(BaseResponse.SUCCESS, "You're authenticated successfully. Private key will be valid for 30 mins", privateKey));
+        }
+
+        boolean validado = false;
+        Periodista periodistaRetorno = PeriodistaDAO.getPeriodista(userName);
+        
+        if(periodistaRetorno != null){
+            if (password.equals(periodistaRetorno.getContrasena())) {
+                validado=true;
+            }
+        }
+        if (validado) {
+            String privateKey = JwTokenHelper.getInstance().generatePrivateKey(userName, password);
+            return getResponse(new AuthorizationResponse(BaseResponse.SUCCESS, "You're authenticated successfully. Private key will be valid for 30 mins", privateKey));
+        } else {
+            return getResponse(new BaseResponse(USERNAME + " Contraseña o usuario invalido", BaseResponse.FAILURE));
+        }
+
     }
 
-    @POST
-    @Path("allDevices")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllDevices() {
-        System.out.println("Method called");
-        return getResponse(new DeviceCollectionResponse(Arrays.asList(new Device("Electric Kettle", 1, true), new Device("Computer", 2, true), new Device("Motorcycle", 3, false), new Device("Sandwich Maker", 4, true))));
+    @GET
+    @Path("/allDevices")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public List<Periodista> getPeriodista_JSON() throws UnknownHostException {
+        List<Periodista> listOfPeriodista = PeriodistaDAO.getAllPeriodista();
+        return listOfPeriodista;
     }
 }

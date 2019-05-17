@@ -2,49 +2,47 @@ package models;
 
 public class Device {
 
-    private String deviceName;
-    private int id;
-    private boolean electricable;
+    private String nombre;
+    private String email;
+    private String contrasena;
 
-    public Device(String deviceName, int id, boolean electricable) {
-        this.deviceName = deviceName;
-        this.id = id;
-        this.electricable = electricable;
+   public Device() {
+            }
+
+    public Device(String nombre, String email, String contrasena) {
+        this.nombre = nombre;
+        this.email = email;
+        this.contrasena = contrasena;
     }
 
-    public Device() {
+
+    public String getNombre() {
+        return nombre;
     }
 
-    public String getDeviceName() {
-        return deviceName;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
+    public String getEmail() {
+        return email;
     }
 
-    public int getId() {
-        return id;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public boolean isElectricable() {
-        return electricable;
-    }
-
-    public void setElectricable(boolean electricable) {
-        this.electricable = electricable;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 
     @Override
     public String toString() {
-        return "Device{" +
-                "deviceName='" + deviceName + '\'' +
-                ", id=" + id +
-                ", electricable=" + electricable +
-                '}';
+        return "Periodista{" + "nombre=" + nombre + ", email=" + email + ", contraseña=" + contrasena + '}';
     }
+    
 }
